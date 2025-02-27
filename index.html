@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="progress-indicator" id="progress-bar"></div>
+ 
+    <header>
+        <h1>Task Manager</h1>
+        <div class="user-info">
+            <div class="dark-mode-switch">
+                <span>🌙</span>
+                <label class="switch">
+                    <input type="checkbox" id="dark-mode-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span>☀️</span>
+            </div>
+            <div id="user-avatar" class="avatar"></div>
+            <div id="current-user"></div>
+            <button id="logout-btn" class="button" style="display: none;">
+                <span>Logout</span>
+                <span>🚪</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="container" id="main-container">
+        <!-- Login Form -->
+        <div id="login-form" class="auth-container fade-in">
+            <h2>Login to Task Manager</h2>
+            <div id="login-alert"></div>
+            <div class="form-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password">
+                <span class="password-toggle" id="login-password-toggle">👁️</span>
+            </div>
+            <div class="remember-me">
+                <input type="checkbox" id="remember-me">
+                <label for="remember-me">Remember me for 30 days</label>
+            </div>
+            <div class="form-actions">
+                <button id="login-btn" class="button">
+                    <span>Login</span>
+                    <span id="login-btn-loader" style="display: none;">
+                        <span class="loader"></span>
+                    </span>
+                </button>
+                <a href="#" id="show-signup">Don't have an account? Sign up</a>
+            </div>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signup-form" class="auth-container fade-in" style="display: none;">
+            <h2>Create Account</h2>
+            <div id="signup-alert"></div>
+            <div class="form-group">
+                <label for="signup-username">Username</label>
+                <input type="text" id="signup-username" placeholder="Choose a username">
+            </div>
+            <div class="form-group">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" placeholder="Choose a password">
+                <span class="password-toggle" id="signup-password-toggle">👁️</span>
+                <div class="password-strength">
+                    <div class="password-strength-bar" id="password-strength-bar"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="signup-confirm-password">Confirm Password</label>
+                <input type="password" id="signup-confirm-password" placeholder="Confirm your password">
+            </div>
+            <div class="form-actions">
+                <button id="signup-btn" class="button">
+                    <span>Sign Up</span>
+                    <span id="signup-btn-loader" style="display: none;">
+                        <span class="loader"></span>
+                    </span>
+                </button>
+                <a href="#" id="show-login">Already have an account? Login</a>
+            </div>
+        </div>
+
+        <!-- Task Dashboard -->
+        <div id="task-dashboard" class="dashboard" style="display: none;">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h3>Navigation</h3>
+                </div>
+                <nav>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link active" data-view="list">
+                            <span>📋</span>
+                            <span>Task List</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" data-view="kanban">
+                            <span>📊</span>
+                            <span>Kanban Board</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" data-view="calendar">
+                            <span>📅</span>
+                            <span>Calendar</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" data-view="analytics">
+                            <span>📈</span>
+                            <span>Analytics</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" data-view="pomodoro">
+                            <span>⏱️</span>
+                            <span>Pomodoro Timer</span>
+                        </a>
+                    </div>
+                </nav>
+                
+                <div class="tags-section">
+                    <div class="tags-header">
+                        <h3>Tags</h3>
+                        <button class="icon-button" id="add-tag-btn">➕</button>
+                    </div>
+                    <ul class="tag-list" id="tag-list">
+                        <!-- Dynamically filled -->
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- List View -->
+                <div id="list-view" class="view-content">
+                    <div class="content-header">
+                        <h2 class="content-title">My Tasks</h2>
+                        <button class="button button-success" id="add-task-btn">
+                            <span>Add Task</span>
+                            <span>➕</span>
+                        </button>
+                    </div>
+                    
+                    <div class="stats-cards">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-tasks">0</div>
+                            <div class="stat-label">Total Tasks</div>
+                        </div>
+                        <div class="stat-card pending">
+                            <div class="stat-value" id="pending-tasks">0</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                        <div class="stat-card completed">
+                            <div class="stat-value" id="completed-tasks">0</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-card overdue">
+                            <div class="stat-value" id="overdue-tasks">0</div>
+                            <div class="stat-label">Overdue</div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-controls">
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="search-tasks" placeholder="Search tasks...">
+                        </div>
+                        <div class="filter-controls">
+                            <button id="filter-all" class="button button-outlined active">All</button>
+                            <button id="filter-active" class="button button-outlined">Active</button>
+                            <button id="filter-completed" class="button button-outlined">Completed</button>
+                        </div>
+                    </div>
+                    
+                    <ul id="task-list" class="task-list"></ul>
+                    
+                    <div class="pagination" id="pagination"></div>
+                </div>
+                
+                <!-- Kanban View -->
+                <div id="kanban-view" class="view-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Kanban Board</h2>
+                    </div>
+                    
+                    <div class="kanban-board">
+                        <div class="kanban-column column-todo">
+                            <div class="kanban-column-header">
+                                <span>To Do</span>
+                                <span class="column-count" id="todo-count">0</span>
+                            </div>
+                            <div class="kanban-tasks" id="todo-tasks" data-status="todo"></div>
+                        </div>
+                        
+                        <div class="kanban-column column-inprogress">
+                            <div class="kanban-column-header">
+                                <span>In Progress</span>
+                                <span class="column-count" id="inprogress-count">0</span>
+                            </div>
+                            <div class="kanban-tasks" id="inprogress-tasks" data-status="inprogress"></div>
+                        </div>
+                        
+                        <div class="kanban-column column-done">
+                            <div class="kanban-column-header">
+                                <span>Done</span>
+                                <span class="column-count" id="done-count">0</span>
+                            </div>
+                            <div class="kanban-tasks" id="done-tasks" data-status="done"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Calendar View -->
+                <div id="calendar-view" class="view-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Calendar</h2>
+                        <div class="calendar-navigation">
+                            <button class="button button-outlined" id="prev-month">◀️</button>
+                            <span id="calendar-month-year">June 2023</span>
+                            <button class="button button-outlined" id="next-month">▶️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-grid" id="calendar-grid"></div>
+                </div>
+                
+                <!-- Analytics View -->
+                <div id="analytics-view" class="view-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Task Analytics</h2>
+                        <div class="chart-options">
+                            <button class="button button-outlined active" data-period="week" id="period-week">Week</button>
+                            <button class="button button-outlined" data-period="month" id="period-month">Month</button>
+                            <button class="button button-outlined" data-period="year" id="period-year">Year</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Task Completion Rate</h3>
+                        </div>
+                        <div class="chart" id="completion-chart">
+                            <canvas id="completion-chart-canvas">
+                                <!-- chart.js -->
+                            </canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Task Distribution by Priority</h3>
+                        </div>
+                        <div class="chart" id="priority-chart">
+                            <canvas id="priority-chart-canvas">
+                                <!-- chart.js -->
+                            </canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Task Status Breakdown</h3>
+                        </div>
+                        <div class="chart" id="status-chart">
+                            <canvas id="status-chart-canvas">
+                                <!-- chart.js -->
+                            </canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Productivity Trends</h3>
+                            <div class="chart-description">Tasks completed over time</div>
+                        </div>
+                        <div class="chart" id="trend-chart">
+                            <canvas id="trend-chart-canvas">
+                                <!-- chart.js -->
+                            </canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pomodoro Timer View -->
+                <div id="pomodoro-view" class="view-content" style="display: none;">
+                    <div class="content-header">
+                        <h2 class="content-title">Pomodoro Timer</h2>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 30px;">
+                        <div id="pomodoro-task" style="margin-bottom: 20px;">
+                            <label for="pomodoro-task-select">Select task to work on:</label>
+                            <select id="pomodoro-task-select" style="margin-left: 10px; padding: 8px; border-radius: 4px;">
+                                <option value="">-- Select a task --</option>
+                            </select>
+                        </div>
+                        
+                        <div class="timer" id="pomodoro-timer">25:00</div>
+                        
+                        <div class="timer-controls">
+                            <button class="button" id="start-timer">Start</button>
+                            <button class="button" id="pause-timer" disabled>Pause</button>
+                            <button class="button" id="reset-timer">Reset</button>
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <button class="button button-outlined" id="pomodoro-mode" data-time="25">Pomodoro</button>
+                            <button class="button button-outlined" id="short-break" data-time="5">Short Break</button>
+                            <button class="button button-outlined" id="long-break" data-time="15">Long Break</button>
+                        </div>
+                        
+                        <div id="pomodoro-count" style="margin-top: 20px; font-size: 0.9rem;">
+                            Completed Pomodoros: 0
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add/Edit Task Modal -->
+    <div class="modal" id="task-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Add New Task</h3>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="task-title">Task Title</label>
+                    <input type="text" id="task-title" placeholder="Enter task title">
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-description">Description</label>
+                    <textarea id="task-description" placeholder="Enter task description" rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="task-due-date">Due Date</label>
+                        <input type="date" id="task-due-date">
+                    </div>
+                    
+                    <div class="form-group" style="flex: 1;">
+                        <label for="task-priority">Priority</label>
+                        <select id="task-priority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-tags">Tags (comma separated)</label>
+                    <input type="text" id="task-tags" placeholder="Enter tags">
+                </div>
+                
+                <div class="form-group">
+                    <label>Status</label>
+                    <div style="display: flex; gap: 15px;">
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="task-status" value="todo" checked>
+                            <span>To Do</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="task-status" value="inprogress">
+                            <span>In Progress</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" name="task-status" value="done">
+                            <span>Done</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="subtasks">
+                    <label>Subtasks</label>
+                    <div id="subtask-list"></div>
+                    
+                    <div class="add-subtask">
+                        <input type="text" id="new-subtask" placeholder="Add a subtask">
+                        <button class="button" id="add-subtask-btn">Add</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="button button-outlined" id="cancel-task">Cancel</button>
+                <button class="button button-success" id="save-task">Save Task</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Task Details Modal -->
+    <div class="modal" id="task-details-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="detail-modal-title">Task Details</h3>
+                <button class="modal-close" id="close-details-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="detail-description"></p>
+                
+                <div style="display: flex; gap: 20px; margin: 20px 0;">
+                    <div>
+                        <strong>Due Date:</strong>
+                        <span id="detail-due-date"></span>
+                    </div>
+                    <div>
+                        <strong>Priority:</strong>
+                        <span id="detail-priority"></span>
+                    </div>
+                    <div>
+                        <strong>Status:</strong>
+                        <span id="detail-status"></span>
+                    </div>
+                </div>
+                
+                <div id="detail-tags" class="task-tags"></div>
+                
+                <div id="detail-subtasks" class="subtasks">
+                    <h4>Subtasks</h4>
+                    <!-- Subtasks will be displayed here -->
+                </div>
+                
+                <div class="comments-section">
+                    <h4>Comments</h4>
+                    <div id="comments-container">
+                        <!-- Comments will be displayed here -->
+                    </div>
+                    
+                    <div class="add-comment">
+                        <textarea id="new-comment" placeholder="Add a comment..."></textarea>
+                        <button class="button" id="add-comment-btn">Add Comment</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="button button-outlined" id="close-details">Close</button>
+                <button class="button" id="edit-task">Edit</button>
+                <button class="button button-danger" id="delete-task">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="action.js"></script>
+</body>
+</html>
