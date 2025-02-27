@@ -103,7 +103,9 @@ const pomodoroTaskSelect = document.getElementById('pomodoro-task-select');
 
 //css rootStyles
 const rootStyles = getComputedStyle(document.documentElement)
+const primaryColor = rootStyles.getPropertyValue("--primary-color").trim()
 const secondaryColor = rootStyles.getPropertyValue("--secondary-color").trim()
+const tertiaryColor = rootStyles.getPropertyValue("--tertiary-color").trim()
 const warningColor = rootStyles.getPropertyValue("--warning-color").trim()
 const dangerColor = rootStyles.getPropertyValue("--danger-color").trim()
 
@@ -1072,7 +1074,7 @@ function createConfetti() {
         confetti.style.left = x + 'px';
         
         // Random color
-        const colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6'];
+        const colors = [primaryColor, secondaryColor, dangerColor, warningColor, tertiaryColor];
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         
         // Random size
@@ -1652,7 +1654,7 @@ function renderAnalytics() {
         datasets: [{
             label: 'Tasks by Priority',
             data: [highPriority, mediumPriority, lowPriority],
-            backgroundColor: ['#e74c3c', '#f39c12', '#2ecc71'],
+            backgroundColor: [dangerColor, warningColor, secondaryColor],
             borderWidth: 0
         }]
     };
